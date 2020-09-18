@@ -54,9 +54,11 @@ def get_central_nodes(graph):
     # degree_sequence = list(sortedDic.keys())
     while V:
         #get the max degree node
-        #TODO
         #不知道这个是随机选取的最大度节点还是选择第一个最大度节点呢？
         w = max(V,key=V.get)
+        maxi_degree_nodes = [node for (node,value) in V.items() if V[w] == value ]
+        #TODO 如果是随机选择 那么则会产生不同的中心节点集合，因为剪切网络的顺序是不同的
+        w = random.choice(maxi_degree_nodes)
         K.append(w)
         del V[w]
         for n in nx.neighbors(graph,w):
@@ -66,7 +68,7 @@ def get_central_nodes(graph):
     
 
 
-def initialization(graph,pop_size,f):
+def initialize_population(graph,pop_size,f):
 
     N = len(graph.nodes())
     pop = []
@@ -137,7 +139,7 @@ def initialization(graph,pop_size,f):
 # # G2 = nx.random_regular_graph(5,30)
 # # G2.remove_node(0)
 # G.add_edges_from([(6,7),(6,1),(6,12),(7,12),(7,1),(1,12),(12,11),(12,2),(2,11),(9,2),(9,10),(9,3),(2,10),(10,3),(3,4),(3,8),(3,5),(4,5),(4,8),(5,8)])
-# pop = initialization(G,2,2)
+# pop = initialize_population(G,2,2)
 
 
 
