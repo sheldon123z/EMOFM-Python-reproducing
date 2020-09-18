@@ -31,8 +31,9 @@ def membership_matrix(graph,chromesome,f):
     for i in range(0,len(NC),1):
         for j in range(0,len(CN),1):
             u[i][j] = membership_7(graph,2,CN,NC,i, j) 
-
+    # print(u)
     binary_membership_matrix = np.zeros_like(u,dtype=int)
+    #set the max number of the row as 1
     binary_membership_matrix[np.arange(len(u)),u.argmax(1)]=1
     
     for i in range(len(binary_membership_matrix)):
@@ -53,12 +54,14 @@ def get_central_nodes(graph):
     # degree_sequence = list(sortedDic.keys())
     while V:
         #get the max degree node
-        i = max(V,key=V.get)
-        K.append(i)
-        for n in nx.neighbors(graph,i):
+        #TODO
+        #不知道这个是随机选取的最大度节点还是选择第一个最大度节点呢？
+        w = max(V,key=V.get)
+        K.append(w)
+        del V[w]
+        for n in nx.neighbors(graph,w):
             if n in V:
                 del V[n]
-        del V[i]
     return K
     
 
@@ -88,7 +91,7 @@ def initialization(graph,pop_size,f):
     #Step 2
 
     #select ith chromesome from the first to the pop_size/2
-    for i in range(int(pop_size/2)):
+    for i in range(int(pop_size)):
         #rand is the index of the central node
         rand_number_of_nodes = random.randint(1,len(K))
         K_copy = K.copy()
@@ -100,7 +103,7 @@ def initialization(graph,pop_size,f):
             pop[i][0][rand_node-1] = 1
 
     # select ith chromesome 
-    for i in range(int(pop_size/2),pop_size):
+    for i in range(int(pop_size/2+1),pop_size):
         rand_number_of_nodes = random.randint(1,N)
         # print('rand_number_of_nodes:',rand_number_of_nodes)
         #range()doesn't include the last bit, so +1 in case all the nodes are selected as central nodes
@@ -130,11 +133,11 @@ def initialization(graph,pop_size,f):
     return pop
 
 #test
-G = nx.Graph()
-# G2 = nx.random_regular_graph(5,30)
-# G2.remove_node(0)
-G.add_edges_from([(6,7),(6,1),(6,12),(7,12),(7,1),(1,12),(12,11),(12,2),(2,11),(9,2),(9,10),(9,3),(2,10),(10,3),(3,4),(3,8),(3,5),(4,5),(4,8),(5,8)])
-pop = initialization(G,2,2)
+# G = nx.Graph()
+# # G2 = nx.random_regular_graph(5,30)
+# # G2.remove_node(0)
+# G.add_edges_from([(6,7),(6,1),(6,12),(7,12),(7,1),(1,12),(12,11),(12,2),(2,11),(9,2),(9,10),(9,3),(2,10),(10,3),(3,4),(3,8),(3,5),(4,5),(4,8),(5,8)])
+# pop = initialization(G,2,2)
 
 
 
