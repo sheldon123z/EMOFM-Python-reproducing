@@ -36,26 +36,6 @@ class AR_MOEA():
         return kkm, rc
 
 
-    def one_way_crossover(self, pi,pj):
-        n = len(pi[0])
-        #get the node from the chromesome, the index is the node since the value 
-        #represents its role as central node or non-central node
-        #select a random seed in pi
-        seed = random.choice(list(range(len(pi[0]))))
-        #get seed's label
-        community_num = graph.nodes[seed]['community']
-        #get all nodes labels
-        community_labels = dict(graph.nodes(data='community'))
-        #get same seed label nodes list, the value is the index+1 in chromesome
-        same_label_nodes = [key for (key,value) in community_labels.items() if value == community_num]
-        for i in same_label_nodes:
-            
-        
-
-
-        print(same_label_nodes)
-
-
 #%%
     def Moea(self):
 
@@ -76,7 +56,7 @@ class AR_MOEA():
 
 
 
-#%%
+#%% one_Way_crossover
 import random
 import networkx as nx
 import membership
@@ -130,4 +110,56 @@ pop = initialization.initialization(G2,4,2)
 pi = pop[0]
 pj = pop[1]
 community_labels = one_way_crossover(random.choice(pop),random.choice(pop))
-# %%
+
+
+# %% Uniform crossover
+import random
+import networkx as nx
+import membership
+import initialization
+from initialization import membership_matrix
+import copy
+
+
+def uniform_crossover(G,pi,pj):
+    
+    
+    child1 = copy.deepcopy(pi)
+    child2 = copy.deepcopy(pj)
+
+    for i in range(len(pi[0])):
+        rand_number = random.uniform(0,1)
+        if rand_number > 0.5:
+            #cross b vector
+            child1[0][i] = pj[0][i]
+            child1[2][i] = pj[2][i]
+            child1.pop()
+            child1 = membership_matrix(G,child1,2)
+
+            child2[0][i] = pi[0][i]
+            child2[2][i]= pi[2][i]
+            child2.pop()
+            child2 = membership_matrix(G,child2,2)
+            
+    return child1,child2
+
+
+G = nx.Graph()
+G2 = nx.read_edgelist('birthdeath.t01.edges',nodetype=int)
+G.add_edges_from([(6,7),(6,1),(6,12),(7,12),(7,1),(1,12),(12,11),(12,2),(2,11),(9,2),(9,10),(9,3),(2,10),(10,3),(3,4),(3,8),(3,5),(4,5),(4,8),(5,8)])
+pop = initialization.initialization(G,4,2)
+parent1 =random.choice(pop)
+parent2 = random.choice(pop)
+child1, child2 = uniform_crossover(G,parent1,parent2)
+
+print('parent number：{}\n\nb vector is: {}\n\nr vector is {}\n\nnode communities: {}\n\n membership matrix is:\n{}\n\n\n'
+.format(1,parent1[0],parent1[1],parent1[2],parent1[3]))
+print('parent number：{}\n\nb vector is: {}\n\nr vector is {}\n\nnode communities: {}\n\n membership matrix is:\n{}\n\n\n'
+.format(2,parent2[0],parent2[1],parent2[2],parent2[3]))
+
+print('child number：{}\n\nb vector is: {}\n\nr vector is {}\n\nnode communities: {}\n\n membership matrix is:\n{}\n\n\n'
+.format(1,child1[0],child1[1],child1[2],child1[3]))
+print('child number：{}\n\nb vector is: {}\n\nr vector is {}\n\nnode communities: {}\n\n membership matrix is:\n{}\n\n\n'
+.format(2,child2[0],child2[1],child2[2],child2[3]))
+
+# %% evaluate KKM and RC
