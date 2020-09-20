@@ -1,6 +1,6 @@
 
 #%%
-import Calculate_KKM_RC as CKR
+import calculate_KKM_RC as CKR
 from initialization import initialize_population
 import networkx as nx
 
@@ -86,5 +86,8 @@ for i,k in enumerate(F):
         color.append(i)
 
 plt.scatter(RC,KKM,c=color,marker='+')
+plt.xlabel = 'RC'
+plt.ylabel = 'KKM'
+plt.title = 'Objective Space'
 plt.show()
 

@@ -7,3 +7,4 @@ class chromesome():
         self.membership_metrix=None
         self.KKM = 0
         self.RC = 0
+        self.fitness = None

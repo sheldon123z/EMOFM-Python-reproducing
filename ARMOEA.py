@@ -52,6 +52,7 @@ class AR_MOEA():
                 P_prime.remove(p_j)
                 if stage_num == 1:
                     #TODO finish the s1 moea
+        pass
 
 
     #TODO finish the s2 moea
