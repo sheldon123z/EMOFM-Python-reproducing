@@ -1,9 +1,6 @@
-import random
 import networkx as nx
-import membership
 import copy
 import itertools
-from initialization import membership_matrix,initialize_population
 from itertools import combinations
 
 

@@ -37,7 +37,7 @@ class AR_MOEA():
 
 
 #%%
-    def Moea(self):
+    def Moea_s1(self):
 
         for i in population:
             self.Evaluation(self,i)
@@ -51,7 +51,12 @@ class AR_MOEA():
                 P_prime.remove(p_i)
                 P_prime.remove(p_j)
                 if stage_num == 1:
-                    
+                    #TODO finish the s1 moea
+
+
+    #TODO finish the s2 moea
+    def Moea_s2(self):
+        pass         
                 
 
 
@@ -189,6 +194,9 @@ print('child number：{}\n\nb vector is: {}\n\nr vector is {}\n\nnode communitie
 # print(child1)
 
 KKM, RC = Cal_KKM(G4,child1)
+
+#%% Mating selection
+
 
 
 

@@ -1,11 +1,13 @@
-
 #%%
 import numpy as np
 import networkx as nx
 import random
 from numpy import linalg
 from scipy.linalg import expm
+# from NondominatedSort import MainStep
 import copy
+
+
 
 def get_NC(chromesome):
     NC = [i+1 for i, x in enumerate(chromesome[0]) if x == 0]
@@ -139,9 +141,10 @@ def initialize_population(graph,pop_size,f):
 # # G2 = nx.random_regular_graph(5,30)
 # # G2.remove_node(0)
 # G.add_edges_from([(6,7),(6,1),(6,12),(7,12),(7,1),(1,12),(12,11),(12,2),(2,11),(9,2),(9,10),(9,3),(2,10),(10,3),(3,4),(3,8),(3,5),(4,5),(4,8),(5,8)])
-# pop = initialize_population(G,2,2)
+# pop = initialize_population(G,4,2)
 
 
+# print(F)
 
 
 # %%
