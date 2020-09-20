@@ -1,3 +1,4 @@
+
 import networkx as nx
 import copy
 import itertools
@@ -23,18 +24,18 @@ def get_communities_list(community_labels):
 
 def Cal_KKM_RC(graph,chromesome):
 
-    community_labels = chromesome[2]
+    community_labels = chromesome.cover
     k = len(set(community_labels))
     n = len(community_labels)
 
     communities = get_communities_list(community_labels)
 
-    print('communities division is:',communities)  
+    # print('communities division is:',communities)  
     print()
 
     adjacent_matrix = nx.convert_matrix.to_numpy_array(graph)
 
-    print('adjacency matrix of the graph is:',adjacent_matrix)
+    # print('adjacency matrix of the graph is:',adjacent_matrix)
 
     L = 0.0
     # since the adjacent matrix is synmmetric so it can be done like this
@@ -67,9 +68,7 @@ def Cal_KKM_RC(graph,chromesome):
                 temp += adjacent_matrix[k][w]
         RC += temp /len(i)   
 
-   
-
-    print('KKM {} RC {}'.format(KKM,RC))
+    # print('KKM {} RC {}'.format(KKM,RC))
 
     return KKM,RC
 
