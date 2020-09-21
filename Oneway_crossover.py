@@ -27,7 +27,7 @@ def one_way_crossover(pi,pj):
     same_label_nodes = [key for (key,value) in pj_community_labels.items() if value == community_num]
     print('same label nodes in pj:',same_label_nodes)
 
-    child = copy.copy(pj)
+    child = copy.deepcopy(pj)
     for node in same_label_nodes:
         child[2].nodes[node]['community'] = community_num
 

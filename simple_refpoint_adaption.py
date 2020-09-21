@@ -1,32 +1,48 @@
-
+#%%
 import mating_selection
-from Mating_selection import contributing_set
+# from mating_selection import contributing_set
 from collections import OrderedDict
 import copy
 import math
 
+def distance_KKM_RC(A,B):
+    return math.sqrt((A[1] - B[1])**2 + (A[0]-B[0])**2)
 
+def contributing_set(P,PR):
+    contributing_set = set()
+    all_set = set(P)
+    # match =[]
+    for r in PR:
+        mini = math.inf
+        z = None
+        for p in P:
+            d = distance_KKM_RC(p,r)
+            if d < mini:
+                mini = d
+                z = p
+        contributing_set.add(z)
+        # match.append((r,z))
+    return contributing_set
 
 def origin_distance(p,origin_y,origin_x):
-    return math.sqrt((p.KKM-origin_y)**2 + (p.RC-origin_x)**2) 
+    return math.sqrt((p[1]-origin_y)**2 + (p[0]-origin_x)**2) 
 
 def get_objective_angle(p,q,kkm_rc = True,Q = False):
     angle = 0
     if kkm_rc:
-        angle = abs(math.atan2(p.KKM,p.RC) - math.atan2(q.KKM,q.RC))
+        angle = abs(math.atan2(p[1],p[0]) - math.atan2(q[1],q[0]))
     return angle
     
 def argmin(P,r,z_kkm,z_rc):
     mini = math.inf
     mini_p = None
-    pr_angle = None
     for p in P:
         angle = get_objective_angle(r,p,kkm_rc=True)
         F_psin = origin_distance(p,z_kkm,z_rc)*math.sin(angle)
         if F_psin < mini:
             mini_p = p
-            pr_angle = angle
-    return mini_p,pr_angle
+            mini = angle
+    return mini_p,mini
 
 def adjust_location(R,P,origin_y,origin_x,kkm_rc = True):
     '''
@@ -35,13 +51,14 @@ def adjust_location(R,P,origin_y,origin_x,kkm_rc = True):
     '''
     R_adapted = []
     
-    for r in range(len(R)):
+    for r in R:
+        r = list(r)
         p, pr_angle = argmin(P,r,origin_y,origin_x)
         F_p = origin_distance(p,origin_y,origin_x)
         new_r = copy.deepcopy(r)
-        new_r.KKM = F_p * math.cos(pr_angle)*math.cos(math.atan2(r.KKM,r.RC))
-        new_r.KKM = F_p * math.cos(pr_angle)*math.sin(math.atan2(r.KKM,r.RC))
-        R_adapted.append(new_r)
+        new_r[0] = F_p * math.cos(pr_angle)*math.cos(math.atan2(r[1],r[0]))
+        new_r[1] = F_p * math.cos(pr_angle)*math.sin(math.atan2(r[1],r[0]))
+        R_adapted.append(tuple(new_r))
     return R_adapted
 
 
@@ -64,7 +81,7 @@ def dominated(listOfElems,kkm_rc=False):
             for j in A:
                 if i == j:
                     continue
-                if i.KKM>j.KKM and i.RC>j.RC:
+                if i[1]>j[1] and i[0]>j[0]:
                     dominated.append(i)
                     break
     return dominated
@@ -79,7 +96,7 @@ def object_list_intersection(A,B,kkm_rc=False,Q=False):
 def distance_between_points(p,q,kkm_rc = True):
     distance = 0
     if kkm_rc:
-        distance = math.sqrt((p.KKM-q.KKM)**2 + (p.RC-q.RC)**2)
+        distance = math.sqrt((p[1]-q[1])**2 + (p[0]-q[0])**2)
 
     return distance
 
@@ -110,25 +127,33 @@ def ref_adapt(A,R,P):
     
     '''
     #translate A,P and scale R
-    z_kkm = min([i.KKM for i in P])
-    z_rc = min([i.RC for i in P])
-    z_nad_kkm = max([i.KKM for i in P])
-    z_nad_rc = max([i.RC for i in P])
+    z_kkm = min([i[1] for i in P])
+    z_rc = min([i[0] for i in P])
+    z_nad_kkm = max([i[1] for i in P])
+    z_nad_rc = max([i[0] for i in P])
 
     #intersection of A and P
     AUP = list(set(n_A)|set(P))
-    
-    for i in AUP:
-        i.KKM = i.KKM-z_kkm 
-        i.RC = i.RC-z_rc
-
-    for R_i in R:
-        R_i.KKM = R_i.kkm*(z_nad_kkm-z_kkm)
-        R_i.RC = R_i.RC*(z_nad_rc-z_rc) 
+    n_AUP = []
+    for t in AUP:
+        i = list(t)
+        i[1] = i[1]-z_kkm 
+        i[0] = i[0]-z_rc
+        t = tuple(i)
+        n_AUP.append(t)
+    AUP = n_AUP
+    n_R=[]
+    for r in R:
+        R_i = list(r)
+        R_i[1] = R_i[1]*(z_nad_kkm-z_kkm)
+        R_i[0] = R_i[0]*(z_nad_rc-z_rc) 
+        r = tuple(R_i)
+        n_R.append(r)
+    R = n_R
     '''
     operation 2 Update archive
     '''
-    deleteDuplicates(n_A)
+    n_A = deleteDuplicates(n_A)
     dominated_solutions = dominated(n_A,kkm_rc=True)
 
     #delete duplicates 
@@ -177,11 +202,35 @@ def ref_adapt(A,R,P):
                     max_angle_p = p
         if max_angle_p:
            R_prime.append(max_angle_p)
-    R_prime = adjust_location(R_prime,P)
-    
+    R_prime = adjust_location(R_prime,P,z_kkm,z_rc)
 
+    return A_prime, R_prime
 
-import individual
+P=[(0,17),(8,10),(9,5),(16,1),(22,0),(33,18),(24,23),(29,31),(11,17),(15,8)]
+R = [(0,10),(8,5),(16,0)]
+A = [(0,17),(8,10),(9,5),(16,1),(22,0)]
+
+A_prime, R_prime = ref_adapt(A,R,P)
+
+import matplotlib.pyplot as plt
+
+KKM = [i[1] for i in R_prime]
+RC = [i[0] for i in R_prime]
+
+AP_KKM = [i[1] for i in A_prime]
+AP_RC = [i[0] for i in A_prime]
+
+A_KKM = [i[1] for i in A]
+A_RC = [i[0] for i in A]
+
+# plt.scatter(RC,KKM,marker='+'),
+plt.scatter(A_RC,A_KKM,marker='o')
+plt.scatter(AP_RC,AP_KKM,marker='^')
+plt.xlabel = 'RC'
+plt.ylabel = 'KKM'
+plt.title = 'Objective Space'
+plt.show()
+print('A_prime is {}, R_prime is {}'.format(A_prime, R_prime))
 
 
 
@@ -191,3 +240,5 @@ import individual
 
 
 
+
+# %%

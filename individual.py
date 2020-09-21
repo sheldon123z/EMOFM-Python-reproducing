@@ -8,3 +8,33 @@ class chromesome():
         self.KKM = 0
         self.RC = 0
         self.fitness = None
+        self.Qov = None
+
+    def Qequal(self,other):
+        if not isinstance(other, chromesome):
+            return NotImplemented
+        return self.KKM == other.KKM and self.RC==other.RC
+
+    def __eq__(self, other): 
+
+        if not isinstance(other, chromesome):
+            return NotImplemented
+        return self.KKM == other.KKM and self.RC==other.RC
+        
+    def __cmp__(self,other):
+
+        if not isinstance(other, chromesome):
+            return NotImplemented
+
+        if self.KKM < other.KKM and self.RC < other.RC:
+            return -1
+        elif self.KKM > other.KKM and self.RC > other.RC:
+            return 1
+        else:
+            return 0
+
+    
+    def __hash__(self):
+        return hash((self.KKM, self.RC))
+
+    def 

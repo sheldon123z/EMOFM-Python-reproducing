@@ -96,7 +96,7 @@ def initialize_population(graph,pop_size,f):
     for i in range(int(pop_size)):
         #rand is the index of the central node
         rand_number_of_nodes = random.randint(1,len(K))
-        K_copy = K.copy()
+        K_copy = copy.deepcopy(K)
         #random number is the number of central node to be put into the initial chrosomes
         for j in range(rand_number_of_nodes):
             rand_node = random.choice(K_copy)
@@ -110,7 +110,7 @@ def initialize_population(graph,pop_size,f):
         # print('rand_number_of_nodes:',rand_number_of_nodes)
         #range()doesn't include the last bit, so +1 in case all the nodes are selected as central nodes
         #put the 随机数量的中心节点到初始化群落中
-        temp_N = N_nodes.copy()
+        temp_N = copy.deeocopy(N_nodes)
         for j in range(rand_number_of_nodes):
             rand_node = random.choice(temp_N)
             # print('rand_node:',rand_node)

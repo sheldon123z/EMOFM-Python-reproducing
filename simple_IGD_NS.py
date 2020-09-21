@@ -2,6 +2,7 @@
 #%%
 import math
 import random
+import copy
 '''
 as stated in the paper
 '''
@@ -49,7 +50,22 @@ def IGD_NS(P, PR):
         sum2 += mini
 
     return sum1+sum2     
-    
+
+#%%          
+def dominated(listOfElems):
+    A = copy.deepcopy(listOfElems)
+    dominated = []
+    for i in A:
+        for j in A:
+            if i[0]==j[0] and i[1]==j[1]:
+                continue
+            if i[0]>j[0] and i[1]>j[1]:
+                dominated.append(i)
+                break
+    return dominated   
+
+
+
 # def fitness(p,P,PR):
 #     p_set = set(P)
 #     new_pop = p_set.remove(P)

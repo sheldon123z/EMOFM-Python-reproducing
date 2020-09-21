@@ -5,7 +5,7 @@ import copy
 
 
 def distance_KKM_RC(A,B):
-    return math.sqrt((A.KKM - B.KKM)**2 + (A.RC-B.RC)**2)
+    return math.sqrt((A[1] - B[1])**2 + (A[0]-B[0])**2)
 
 
 
@@ -81,17 +81,17 @@ def MatingSelection_KKM_RC(pop,adapted_R):
     population = copy.deepcopy(pop)
     mini_KKM = math.inf
     for chromesome in population:
-        if chromesome.KKM < mini_KKM:
-            mini_KKM = chromesome.KKM
+        if chromesome[1] < mini_KKM:
+            mini_KKM = chromesome[1]
 
     mini_RC = math.inf
     for chromesome in population:
-        if chromesome.RC < mini_RC:
-            mini_RC = chromesome.RC
+        if chromesome[0] < mini_RC:
+            mini_RC = chromesome[0]
     
     for chromesome in population:
-        chromesome.KKM = chromesome.KKM - mini_KKM
-        chromesome.RC = chromesome.RC - mini_RC
+        chromesome[1] = chromesome[1] - mini_KKM
+        chromesome[0] = chromesome[0] - mini_RC
         chromesome.fitness = fitness(chromesome,population,adapted_R)
 
     P_prime = []
@@ -103,3 +103,5 @@ def MatingSelection_KKM_RC(pop,adapted_R):
         else:
             P_prime.append(q)
     return P_prime
+
+
