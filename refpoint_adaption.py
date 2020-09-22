@@ -19,14 +19,13 @@ def get_objective_angle(p,q,kkm_rc = True,Q = False):
 def argmin(P,r,z_kkm,z_rc):
     mini = math.inf
     mini_p = None
-    pr_angle = None
     for p in P:
         angle = get_objective_angle(r,p,kkm_rc=True)
         F_psin = origin_distance(p,z_kkm,z_rc)*math.sin(angle)
         if F_psin < mini:
             mini_p = p
-            pr_angle = angle
-    return mini_p,pr_angle
+            mini = angle
+    return mini_p,mini
 
 def adjust_location(R,P,origin_y,origin_x,kkm_rc = True):
     '''
@@ -39,7 +38,7 @@ def adjust_location(R,P,origin_y,origin_x,kkm_rc = True):
         p, pr_angle = argmin(P,r,origin_y,origin_x)
         F_p = origin_distance(p,origin_y,origin_x)
         new_r = copy.deepcopy(r)
-        new_r.KKM = F_p * math.cos(pr_angle)*math.cos(math.atan2(r.KKM,r.RC))
+        new_r.RC = F_p * math.cos(pr_angle)*math.cos(math.atan2(r.KKM,r.RC))
         new_r.KKM = F_p * math.cos(pr_angle)*math.sin(math.atan2(r.KKM,r.RC))
         R_adapted.append(new_r)
     return R_adapted

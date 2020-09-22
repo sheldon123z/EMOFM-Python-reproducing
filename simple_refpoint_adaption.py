@@ -56,7 +56,9 @@ def adjust_location(R,P,origin_y,origin_x,kkm_rc = True):
         p, pr_angle = argmin(P,r,origin_y,origin_x)
         F_p = origin_distance(p,origin_y,origin_x)
         new_r = copy.deepcopy(r)
+        #RC 是增长的向量乘以cos夹角
         new_r[0] = F_p * math.cos(pr_angle)*math.cos(math.atan2(r[1],r[0]))
+        #KKM 是增长的向量乘以sin夹角
         new_r[1] = F_p * math.cos(pr_angle)*math.sin(math.atan2(r[1],r[0]))
         R_adapted.append(tuple(new_r))
     return R_adapted
@@ -206,26 +208,39 @@ def ref_adapt(A,R,P):
 
     return A_prime, R_prime
 
-P=[(0,17),(8,10),(9,5),(16,1),(22,0),(33,18),(24,23),(29,31),(11,17),(15,8)]
-R = [(0,10),(8,5),(16,0)]
-A = [(0,17),(8,10),(9,5),(16,1),(22,0)]
+# A=[(0,17),(8,10),(9,5),(16,1),(22,0),(33,18),(24,23),(29,31),(11,17),(15,8)]
+A=[(10,10),(9,5),(18,1),(22,0),(33,18),(20,23),(26,27),(24,15),(16,41),(29,11),(0,32),(3,16),(6,30),(34,32),(48,56),(34,41),(43,44)]
+# R = [(0,10),(8,5),(16,0),(42,33),(18,23),(2,8),(3,3),(5,6),(0,1),(1,0),(12,13)]
+R =[(0,10),(8,5),(16,0)]
+P = [(8,10),(9,5),(16,1),(22,0),(33,18),(24,23),(26,27),(24,35),(16,41),(29,31),(0,32),(3,13),(6,30),(34,32),(48,56),(34,41),(43,44)]
 
 A_prime, R_prime = ref_adapt(A,R,P)
 
 import matplotlib.pyplot as plt
 
-KKM = [i[1] for i in R_prime]
-RC = [i[0] for i in R_prime]
-
-AP_KKM = [i[1] for i in A_prime]
-AP_RC = [i[0] for i in A_prime]
 
 A_KKM = [i[1] for i in A]
 A_RC = [i[0] for i in A]
+# plt.scatter(A_RC,A_KKM,marker='o',alpha=0.3)
 
-# plt.scatter(RC,KKM,marker='+'),
-plt.scatter(A_RC,A_KKM,marker='o')
-plt.scatter(AP_RC,AP_KKM,marker='^')
+APrime_KKM = [i[1] for i in A_prime]
+APrime_RC = [i[0] for i in A_prime]
+# plt.scatter(APrime_RC,APrime_KKM,marker='^')
+
+R_KKM = [i[1] for i in R]
+R_RC = [i[0] for i in R]
+plt.scatter(R_RC,R_KKM,marker='^',alpha = 0.3,color = 'g')
+
+R_prime_KKM = [i[1] for i in R_prime]
+R_prime_RC = [i[0] for i in R_prime]
+plt.scatter(R_prime_RC,R_prime_KKM,marker='+')
+
+
+P_KKM = [i[1] for i in P]
+P_RC = [i[0] for i in P]
+# plt.scatter(P_RC,P_KKM,marker='o',alpha =0.3)
+
+
 plt.xlabel = 'RC'
 plt.ylabel = 'KKM'
 plt.title = 'Objective Space'
