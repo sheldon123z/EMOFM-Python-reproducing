@@ -10,23 +10,23 @@ from initialization import initialize_population
 from itertools import combinations
 
 
-def uniform_crossover(G,pi,pj):
+def uniform_crossover(pi,pj,kkm_rc=False,Qov =False):
     
     
     child1 = copy.deepcopy(pi)
     child2 = copy.deepcopy(pj)
+    if kkm_rc:
+        for i in range(len(pi.b)):
+            rand_number = random.uniform(0,1)
+            if rand_number > 0.5:
+                #cross b vector
+                child1.b[i] = pj.b[i]
+                child1.cover[i] = pj.cover[i]
+                # child1 = membership.membership_matrix(G,child1,2)
 
-    for i in range(len(pi.b)):
-        rand_number = random.uniform(0,1)
-        if rand_number > 0.5:
-            #cross b vector
-            child1.b[i] = pj.b[i]
-            child1.cover[i] = pj.cover[i]
-            child1 = membership.membership_matrix(G,child1,2)
-
-            child2.b[i] = pi.b[i]
-            child2.cover[i]= pi.cover[i]
-            child2 = membership.membership_matrix(G,child2,2)
+                child2.b[i] = pi.b[i]
+                child2.cover[i]= pi.cover[i]
+                # child2 = membership.membership_matrix(G,child2,2)
             
     return child1,child2
 

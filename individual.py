@@ -1,8 +1,10 @@
+import numpy as np
+import random
 class chromesome():
 
     def __init__(self,N):
         self.b = [0]*N
-        self.r = [0]*N
+        self.r = [random.random() for i in range(N)]
         self.cover = list(range(1,N+1))
         self.membership_metrix=None
         self.KKM = 0
@@ -10,7 +12,7 @@ class chromesome():
         self.fitness = None
         self.Qov = None
 
-    def Qequal(self,other):
+    def Q_equal(self,other):
         if not isinstance(other, chromesome):
             return NotImplemented
         return self.KKM == other.KKM and self.RC==other.RC
@@ -36,5 +38,3 @@ class chromesome():
     
     def __hash__(self):
         return hash((self.KKM, self.RC))
-
-    def 

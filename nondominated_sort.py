@@ -1,5 +1,10 @@
 
 #%%
+
+'''
+An Efficient Approach to Nondominated Sorting for Evolutionary Multiobjective Optimization
+'''
+
 import calculate_KKM_RC as CKR
 from initialization import initialize_population
 import networkx as nx
@@ -12,13 +17,10 @@ def is_dominating_mini(A,B):
     '''
     return A.RC<B.RC and A.KKM < B.KKM
 
-
-
 def contains_dominating_solution(F_k,solution):
     '''
     check if F_k contains dominating solution compared to the current solution
     '''
-
     #using reversed order to check because the most dominating solution on KKM 
     #direction has the highest possibility of dominating on RC direction 
     for x in reversed(F_k):
@@ -44,7 +46,9 @@ def ENS_BS(individual,F):
     pass
 
 def ENS_SS(individual,F):
-    
+    '''
+    Sequential sort
+    '''
     x = len(F)
     k = 0
     appended = False
@@ -56,8 +60,11 @@ def ENS_SS(individual,F):
     return F
 
 
-def MainStep(graph,population):
-
+def produce_fronts(graph,population):
+    '''
+    Produces the fronts, the fronts are ascending ordered, which means the F[0] contains 
+    the most dominating non-dominated individuals among others
+    '''
     F = [[]]
     sortedPop = sortingPop(graph,population)
     for individual in sortedPop:
@@ -66,28 +73,28 @@ def MainStep(graph,population):
 
 
 
-# %% Test the function
+# # %% Test the function
 
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
-G = nx.Graph()
-G.add_edges_from([(6,7),(6,1),(6,12),(7,12),(7,1),(1,12),(12,11),(12,2),(2,11),(9,2),(9,10),(9,3),(2,10),(10,3),(3,4),(3,8),(3,5),(4,5),(4,8),(5,8)])
-pop = initialize_population(G,50,2)
+# G = nx.Graph()
+# G.add_edges_from([(6,7),(6,1),(6,12),(7,12),(7,1),(1,12),(12,11),(12,2),(2,11),(9,2),(9,10),(9,3),(2,10),(10,3),(3,4),(3,8),(3,5),(4,5),(4,8),(5,8)])
+# pop = initialize_population(G,50,2)
 
-F = MainStep(G,pop)
-print(len(F))
-KKM = []
-RC = []
-color = []
-for i,k in enumerate(F):
-    for j,m in enumerate(k):
-        KKM.append(m.KKM)
-        RC.append(m.RC)
-        color.append(i)
+# F = produce_fronts(G,pop)
+# print(len(F))
+# KKM = []
+# RC = []
+# color = []
+# for i,k in enumerate(F):
+#     for j,m in enumerate(k):
+#         KKM.append(m.KKM)
+#         RC.append(m.RC)
+#         color.append(i)
 
-plt.scatter(RC,KKM,c=color,marker='+')
-plt.xlabel = 'RC'
-plt.ylabel = 'KKM'
-plt.title = 'Objective Space'
-plt.show()
+# plt.scatter(RC,KKM,c=color,marker='+')
+# plt.xlabel = 'RC'
+# plt.ylabel = 'KKM'
+# plt.title = 'Objective Space'
+# plt.show()
 

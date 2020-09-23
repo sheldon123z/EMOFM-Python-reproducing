@@ -69,5 +69,5 @@ def Cal_KKM_RC(graph,chromesome):
 
     # print('KKM {} RC {}'.format(KKM,RC))
 
-    return KKM,RC
+    return round(KKM,2),round(RC,2)
 

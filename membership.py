@@ -34,12 +34,13 @@ def membership_matrix(graph,chromesome,f):
     #initialize membership matrix with filled 0s
     u = np.full(shape=(len(NC),len(CN)),dtype=float,fill_value=0)
     #calculate each NC node membership
-    for i in range(0,len(NC),1):
-        for j in range(0,len(CN),1):
+    for i in range(len(NC)):
+        for j in range(len(CN)):
             u[i][j] = membership_7(graph,2,CN,NC,i, j) 
     # print(u)
     binary_membership_matrix = np.zeros_like(u,dtype=int)
     #set the max number of the row as 1
+    # if u.size!=0:
     binary_membership_matrix[np.arange(len(u)),u.argmax(1)]=1
     
     for i in range(len(binary_membership_matrix)):

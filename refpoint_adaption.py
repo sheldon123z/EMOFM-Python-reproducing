@@ -1,6 +1,5 @@
 
-import mating_selection
-from Mating_selection import contributing_set
+import mating_selection as MS
 from collections import OrderedDict
 import copy
 import math
@@ -34,24 +33,26 @@ def adjust_location(R,P,origin_y,origin_x,kkm_rc = True):
     '''
     R_adapted = []
     
-    for r in range(len(R)):
+    for r in R:
         p, pr_angle = argmin(P,r,origin_y,origin_x)
         F_p = origin_distance(p,origin_y,origin_x)
         new_r = copy.deepcopy(r)
-        new_r.RC = F_p * math.cos(pr_angle)*math.cos(math.atan2(r.KKM,r.RC))
-        new_r.KKM = F_p * math.cos(pr_angle)*math.sin(math.atan2(r.KKM,r.RC))
+        new_r.RC = round(F_p * math.cos(pr_angle)*math.cos(math.atan2(r.KKM,r.RC)),2)
+        new_r.KKM =round(F_p * math.cos(pr_angle)*math.sin(math.atan2(r.KKM,r.RC)),2)
         R_adapted.append(new_r)
     return R_adapted
 
 
 
 def deleteDuplicates(listOfElems):
-    uniqueList =[]
+    uniqueList =set()
+    new_list=[]
     for i in listOfElems:
-        if i not in uniqueList:
-            uniqueList.append(i)
+        if (i.KKM,i.RC) not in uniqueList:
+            uniqueList.add((i.KKM,i.RC))
+            new_list.append(i)
 
-    return uniqueList
+    return new_list
 
 
 
@@ -71,7 +72,7 @@ def dominated(listOfElems,kkm_rc=False):
 def object_list_intersection(A,B,kkm_rc=False,Q=False):
     result =[]
     if kkm_rc:
-        result = list(set(A).intersection(B))
+        result = list(set(A).intersection(set(B)))
 
     return result
 
@@ -115,6 +116,7 @@ def ref_adapt(A,R,P):
     z_nad_rc = max([i.RC for i in P])
 
     #intersection of A and P
+    #TODO 注意这里，如果KKM和RC相同的话则应该认为是重复的
     AUP = list(set(n_A)|set(P))
     
     for i in AUP:
@@ -122,12 +124,12 @@ def ref_adapt(A,R,P):
         i.RC = i.RC-z_rc
 
     for R_i in R:
-        R_i.KKM = R_i.kkm*(z_nad_kkm-z_kkm)
-        R_i.RC = R_i.RC*(z_nad_rc-z_rc) 
+        R_i.KKM = round(R_i.KKM*(z_nad_kkm-z_kkm),2)
+        R_i.RC = round(R_i.RC*(z_nad_rc-z_rc),2)
     '''
     operation 2 Update archive
     '''
-    deleteDuplicates(n_A)
+    n_A = deleteDuplicates(n_A)
     dominated_solutions = dominated(n_A,kkm_rc=True)
 
     #delete duplicates 
@@ -136,25 +138,32 @@ def ref_adapt(A,R,P):
             n_A.remove(d)
 
     R = adjust_location(R,P,z_kkm,z_rc)
-    A_con = contributing_set(n_A,R)
+    A_con = MS.contributing_set(n_A,R)
     A_prime = copy.deepcopy(A_con)
 
     #follow the algorithm
     minlen = min([len(R),len(A_prime)])
     while len(A_prime) < minlen:
-        A_left = object_list_intersection(A,A_prime)
-        '''在这里，我对算法的理解是，找到所有p和q最小夹角中，度数最大的夹角的那一个的p'''
-        max_angle = -math.inf
-        max_angle_p = None
-        for p in A_left:
-            #对每一个p而言，先找到与其对应的最小q夹角，再在最小夹角中选最大的
-            for q in A_prime:
+        # A_left = object_list_intersection(A,A_prime)
+        A_left = list(set(A).intersection(set(A_prime)))
+        '''在这里，我对算法的理解是，找到所有p和q最小锐角中，度数最大的夹角的那一个的p'''
+        min_angle_ps = []
+        for q in A_prime:
+            #对每一个q而言，先找到与其对应的最小p夹角，再在最小夹角中选最大的
+            min_angle = math.inf
+            min_angle_p = None
+            for p in A_left:
                 angle = get_objective_angle(p,q,kkm_rc=True)
-                if angle > max_angle:
-                    max_angle = angle
-                    max_angle_p = p
-        if max_angle_p:
-            A_prime.append(max_angle_p)
+                if angle < min_angle:
+                    min_angle = angle
+                    min_angle_p = p
+            #测量每个q对p的夹角，找到当前q最小夹角的p
+            min_angle_ps.append((min_angle_p,min_angle))
+        #所有的最小夹角p都集中再了min_angle_ps,选择夹角最大的一个加入A_prime
+        if min_angle_ps:
+            min_angle_ps.sort(key=lambda x:x[1])
+            max_min_p = min_angle_ps
+            A_prime.append(min_angle_ps[-1][0])
 
     '''
     operation 3: Adapt reference points
@@ -164,22 +173,31 @@ def ref_adapt(A,R,P):
     minlen = min([len(R),len(A_prime)])
 
     while len(R_prime) < minlen:
-        AR_left = object_list_intersection(A_prime,R_prime)
-        max_angle = -math.inf
-        max_angle_p = None
-        for p in AR_left:
-            #对每一个p而言，先找到与其对应的最小q夹角，再在最小夹角中选最大的
-            for q in R_prime:
-                angle = get_objective_angle(p,q,kkm_rc=True)
-                if angle > max_angle:
-                    max_angle = angle
-                    max_angle_p = p
-        if max_angle_p:
-           R_prime.append(max_angle_p)
-    R_prime = adjust_location(R_prime,P)
+ 
+        #TODO AP——left中包含相近的
+        AP_left = list(set(A_prime)-set(A_prime).intersection(set(R_prime)))
+        '''在这里，我对算法的理解是，找到所有p和q最小锐角中，度数最大的夹角的那一个的p'''
+        min_angle_ps = []
+        for r in R_prime:
+            #对每一个q而言，先找到与其对应的最小p夹角，再在最小夹角中选最大的
+            min_angle = math.inf
+            min_angle_p = None
+            if AP_left:
+                for p in AP_left:
+                    angle = get_objective_angle(p,r,kkm_rc=True)
+                    if angle < min_angle:
+                        min_angle = angle
+                        min_angle_p = p
+                min_angle_ps.append((min_angle_p,min_angle))
+        if min_angle_ps:
+            min_angle_ps.sort(key=lambda x:x[1])
+            max_min_p = min_angle_ps
+            R_prime.append(min_angle_ps[-1][0])
+        
+
+    R_prime = adjust_location(R_prime,P,z_kkm,z_rc)
     
-
-
+    return A_prime, R_prime
 import individual
 
 
