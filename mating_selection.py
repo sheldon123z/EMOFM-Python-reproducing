@@ -2,6 +2,7 @@ import numpy as np
 import math
 import random
 import copy
+import membership
 
 
 def distance_KKM_RC(A,B):
@@ -15,8 +16,9 @@ def non_contributing_set(P,PR):
     Get non-contributing set form the population
     the non-contributing set refers to those points which doesn't have a closest reference point
     '''
-    contributing_set = set()
-    all_set = set(P)
+    contributing_set = []
+    all_set = P
+    remove =[]
 
     # select from each of the reference point, each reference point must have a closest-
     # distance-point from the population, put them into a set, and the left points are 
@@ -30,20 +32,23 @@ def non_contributing_set(P,PR):
             if d < mini:
                 mini = d
                 z = p
-        contributing_set.add(z)
+        contributing_set.append(z)
         # match.append((r,z))
-    non_contributing_set = all_set - contributing_set
+    for n in all_set:
+        if n in contributing_set:
+            remove.append(n)
 
-    return non_contributing_set
+    for r in remove:
+        all_set.remove(r)
+
+    return all_set
 
 def contributing_set(P,PR):
     '''
     Get contributing set form the population
     the contributing set refers to those points who have a closest reference point
     '''
-    contributing_set = set()
-    all_set = set(P)
-    # match =[]
+    contributing_set = []
     for r in PR:
         mini = math.inf
         z = None
@@ -52,8 +57,8 @@ def contributing_set(P,PR):
             if d < mini:
                 mini = d
                 z = p
-        contributing_set.add(z)
-        # match.append((r,z))
+        contributing_set.append(z)
+
     return contributing_set
 
 def IGD_NS(P, PR):
@@ -98,34 +103,45 @@ def fitness(chromesome,P,adapted_R):
 
 
 
-def MatingSelection(P,adapted_R,kkm_rc = True):
+def MatingSelection(graph,P,adapted_R,kkm_rc = True):
     '''
     Perform mating selection on population and adapted reference
     If the objectives are KKM and RC, then put true flag on kkm_rc
     '''
     population = copy.deepcopy(P)
-
+    P_prime = []
     # Normolize KKM and RC using the minimum KKM and RC value in the population 
     if kkm_rc:
-        mini_KKM = math.inf
-        mini_RC = math.inf
+        # mini_KKM = math.inf
+        # mini_RC = math.inf
+        
+        # for chromesome in population:
+        #     if chromesome.KKM < mini_KKM:
+        #         mini_KKM = chromesome.KKM
+        #     if chromesome.RC < mini_RC:
+        #         mini_RC = chromesome.RC
+        #     chromesome.fitness = 0
+
+        min_KKM = min([p.KKM for p in population])
+        min_RC = min([p.RC for p in population])
         for chromesome in population:
-            if chromesome.KKM < mini_KKM:
-                mini_KKM = chromesome.KKM
-            if chromesome.RC < mini_RC:
-                mini_RC = chromesome.RC
+            chromesome.fitness = 0
 
         for chromesome in population:
-            chromesome.KKM = round(chromesome.KKM - mini_KKM,2)
-            chromesome.RC = round(chromesome.RC - mini_RC,2)
+            chromesome.KKM = chromesome.KKM - min_KKM
+            chromesome.RC = chromesome.RC - min_RC
             chromesome.fitness = fitness(chromesome,population,adapted_R)
 
-    P_prime = []
-    for i in range(len(population)):
-        p = random.choice(population)
-        q = random.choice(population)
-        if p.fitness > q.fitness:
-            P_prime.append(p)
-        else:
-            P_prime.append(q)
+   
+        for i in range(len(population)):
+            p = random.choice(population)
+            q = random.choice(population)
+            if p.fitness > q.fitness:
+                p.KKM += min_KKM
+                p.RC += min_RC
+                P_prime.append(p)
+            else:
+                q.KKM += min_KKM
+                q.RC += min_RC
+                P_prime.append(q)
     return P_prime

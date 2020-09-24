@@ -22,12 +22,16 @@ def uniform_crossover(pi,pj,kkm_rc=False,Qov =False):
                 #cross b vector
                 child1.b[i] = pj.b[i]
                 child1.cover[i] = pj.cover[i]
-                # child1 = membership.membership_matrix(G,child1,2)
+                if all(v == 0 for v in child1.b):
+                    m = random.randint(0,len(child1.b)-1)
+                    child1.b[m] = 1
 
                 child2.b[i] = pi.b[i]
                 child2.cover[i]= pi.cover[i]
-                # child2 = membership.membership_matrix(G,child2,2)
-            
+                # 如果交换后，child变成了全部是0的数组，则随机选一个当中心
+                if all(v == 0 for v in child2.b):
+                    m = random.randint(0,len(child2.b)-1)
+                    child2.b[m] = 1
     return child1,child2
 
 # #Test Enzemy_g163 graph

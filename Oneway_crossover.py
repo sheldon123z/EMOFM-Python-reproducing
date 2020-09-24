@@ -40,7 +40,7 @@ def one_way_crossover(pi,pj):
 # graph.add_edges_from([(6,7),(6,1),(6,12),(7,12),(7,1),(1,12),(12,11),(12,2),(2,11),(9,2),(9,10),(9,3),(2,10),(10,3),(3,4),(3,8),(3,5),(4,5),(4,8),(5,8)])
 # CN = [6,8,10]
 # NC = [1,2,3,4,5,7,9,11,12]
-# out = membership.membership_matrix(graph,CN,NC)
+# out = membership.factor_individual(graph,CN,NC)
 # print()
 # print(out)
 

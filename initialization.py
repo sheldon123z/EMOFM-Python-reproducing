@@ -35,8 +35,7 @@ def initialize_population(graph,N_pop,f):
 
     N = len(graph.nodes())
     pop = []
-    num_nodes = list(range(1,N+1))
-    # print('num_nodes',num_nodes)
+
 
     ''' 
     Initialize population
@@ -52,7 +51,7 @@ def initialize_population(graph,N_pop,f):
     #Step 2
 
     #select ith chromesome from the first to the N_pop/2
-    for i in range(int(N_pop)):
+    for i in range(int(N_pop/2)):
         #rand is the index of the central node
         rand_number_of_nodes = random.randint(1,len(K))
         K_copy = copy.deepcopy(K)
@@ -64,27 +63,33 @@ def initialize_population(graph,N_pop,f):
             pop[i].b[rand_node-1] = 1
 
     # select ith chromesome 
-    for i in range(int(N_pop/2+1),N_pop):
-        rand_number_of_nodes = random.randint(1,N)
-        # print('rand_number_of_nodes:',rand_number_of_nodes)
-        #range()doesn't include the last bit, so +1 in case all the nodes are selected as central nodes
-        #put the 随机数量的中心节点到初始化群落中
-        temp_N = copy.deepcopy(num_nodes)
-        for j in range(rand_number_of_nodes):
-            rand_node = random.choice(temp_N)
-            # print('rand_node:',rand_node)
-            temp_N.remove(rand_node)
-            #rand is the index of Pib_node, so minus 1
-            pop[i].b[rand_node-1] = 1
+    # print('num_nodes',num_nodes)
+    randBinList = lambda n: [random.randint(0,1) for b in range(1,n+1)]
+    for i in range(int(N_pop/2),N_pop):
+        # rand_number_of_nodes = random.randint(1,N-1)
+        # # print('rand_number_of_nodes:',rand_number_of_nodes)
+        # #range()doesn't include the last bit, so +1 in case all the nodes are selected as central nodes
+        # #put the 随机数量的中心节点到初始化群落中
+
+        # for j in range(rand_number_of_nodes):
+        #     rand_node = random.choice(range(N))
+        #     # #rand is the index of Pib_node, so minus 1
+        #     pop[i].b[rand_node-1] = 1
+        while all(v==0 for v in pop[i].b):
+            pop[i].b = randBinList(N)
+
+
+
+
 
     #labelling the node 
     for i,chromesome in enumerate(pop):
         #get CN and NC nodes, since the central is 
         # extracted from b vector, the node is labelled from 1, so the index +1 is the node's label
-        chromesome = membership.membership_matrix(graph,chromesome,f=2)
-        KKM,RC = CKR.Cal_KKM_RC(graph,chromesome)
-        chromesome.KKM = KKM
-        chromesome.RC = RC
+        chromesome = membership.factor_individual(graph,chromesome,f=2)
+        # KKM,RC = CKR.Cal_KKM_RC(graph,chromesome)
+        # chromesome.KKM = KKM
+        # chromesome.RC = RC
         
         # print('chromesome number：{}\n\nb vector is: {}\n\nr vector is {}\n\nnode communities: {}\n\n membership matrix is:\n{}\n\n\n'
         # .format(i,pop[i][0],pop[i][1],pop[i][2],pop[i][3]))

@@ -1,6 +1,8 @@
 import nondominated_sort as ns
 from mating_selection import IGD_NS
-
+import copy
+import math
+import membership
 def environmental_selection(G,P,R_prime,N):
     
     minKKM = min([p.KKM for p in P])
@@ -20,18 +22,40 @@ def environmental_selection(G,P,R_prime,N):
             break
     
     Q = []
-    for i in range(k-1):
-        for p in Fronts[i]:
-            Q.append(p)
-    
-    while len(Fronts[k]) > N - len(Q):
-        p=0
-        while p < len(Fronts[k]):
-            Fronts[k].remove(p)
-            p = IGD_NS(Fronts[k],R_prime)
-            p+=1
-            
+    if k == 0:
+        while len(Fronts[0]) > N:
+            min_igd = math.inf
+            p_delete = 0
+            for index,p in enumerate(Fronts[0]):
+                temp =copy.deepcopy(Fronts[0])
+                temp.remove(p)
+                i = IGD_NS(temp,R_prime)
+                if min_igd > i:
+                    min_igd = i
+                    p_delete = index
+            Fronts[0].pop(index)
+
+    else:
+        for i in range(k):
+            for p in Fronts[i]:
+                Q.append(p)
+        print('length Q {}, k {}'.format(len(Q),k))
+        while len(Fronts[k]) > N - len(Q):
+            min_igd = math.inf
+            p_delete = 0
+            for index,p in enumerate(Fronts[k]):
+                temp =copy.deepcopy(Fronts[k])
+                temp.remove(p)
+                i = IGD_NS(temp,R_prime)
+                if min_igd > i:
+                    min_igd = i
+                    p_delete = index
+            Fronts[k].pop(index)
+
+
     for p in Fronts[k]:
+        p.KKM += minKKM
+        p.RC += minRC
         Q.append(p)
     return Q
      

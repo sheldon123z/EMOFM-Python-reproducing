@@ -30,7 +30,7 @@ def Cal_KKM_RC(graph,chromesome):
     communities = get_communities_list(community_labels)
 
     # print('communities division is:',communities)  
-    print()
+    # print()
 
     adjacent_matrix = nx.convert_matrix.to_numpy_array(graph)
 

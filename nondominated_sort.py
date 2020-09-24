@@ -17,6 +17,22 @@ def is_dominating_mini(A,B):
     '''
     return A.RC<B.RC and A.KKM < B.KKM
 
+
+def sortingPop(graph,population,decending = False):
+    '''
+    sort the population by ascending order
+    '''
+    # for individual in population:
+    #     KKM, RC = CKR.Cal_KKM_RC(graph,individual)
+    #     individual.KKM = KKM
+    #     individual.RC = RC
+    #sorting the population in ascending order
+    sortedPop = sorted(population,key = lambda individual: (individual.KKM, individual.RC))
+    return sortedPop
+
+def ENS_BS(individual,F):
+    pass
+
 def contains_dominating_solution(F_k,solution):
     '''
     check if F_k contains dominating solution compared to the current solution
@@ -27,23 +43,6 @@ def contains_dominating_solution(F_k,solution):
         if is_dominating_mini(x,solution):
             return True
     return False
-
-
-def sortingPop(graph,population,decending = False):
-    '''
-    sort the population by ascending order
-    '''
-    #TODO 这里不确定是否需要重新计算KKM 和RC，但是测试该单元需要，以后记得删除
-    for individual in population:
-        KKM, RC = CKR.Cal_KKM_RC(graph,individual)
-        individual.KKM = KKM
-        individual.RC = RC
-    #sorting the population in ascending order
-    sortedPop = sorted(population,key = lambda individual: individual.KKM)
-    return sortedPop
-
-def ENS_BS(individual,F):
-    pass
 
 def ENS_SS(individual,F):
     '''
