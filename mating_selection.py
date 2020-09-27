@@ -5,13 +5,16 @@ import copy
 import membership
 
 
-def distance_KKM_RC(A,B):
+def distance_between_solution_reference(A,B,kkm_rc = True):
     '''
     Euclidean distance between two points in the objective space
     '''
-    return math.sqrt((A.KKM - B.KKM)**2 + (A.RC-B.RC)**2)
+    if kkm_rc:
+        return math.sqrt((A.KKM - B.KKM)**2 + (A.RC-B.RC)**2)
+    else:
+        return math.sqrt((A.Qov - B.Qov)**2 + (A.Numoverlapping-B.Numoverlapping)**2)
 
-def non_contributing_set(P,PR):
+def non_contributing_set(P,PR,kkm_rc=True):
     '''
     Get non-contributing set form the population
     the non-contributing set refers to those points which doesn't have a closest reference point
@@ -28,7 +31,7 @@ def non_contributing_set(P,PR):
         mini = math.inf
         z = None
         for p in P:
-            d = distance_KKM_RC(p,r)
+            d = distance_between_solution_reference(p,r,kkm_rc)
             if d < mini:
                 mini = d
                 z = p
@@ -43,7 +46,7 @@ def non_contributing_set(P,PR):
 
     return all_set
 
-def contributing_set(P,PR):
+def contributing_set(P,PR,kkm_rc=True):
     '''
     Get contributing set form the population
     the contributing set refers to those points who have a closest reference point
@@ -53,7 +56,7 @@ def contributing_set(P,PR):
         mini = math.inf
         z = None
         for p in P:
-            d = distance_KKM_RC(p,r)
+            d = distance_between_solution_reference(p,r,kkm_rc)
             if d < mini:
                 mini = d
                 z = p
@@ -61,18 +64,24 @@ def contributing_set(P,PR):
 
     return contributing_set
 
-def IGD_NS(P, PR):
+
+
+def IGD_NS(P, PR,kkm_rc = True):
     '''
     Get the IGD_NS metric value from the population and the reference set
     P: population 
     PR: reference value
     '''
-    non_contributing = non_contributing_set(P,PR)
+    non_contributing = []
+    if kkm_rc:
+        non_contributing = non_contributing_set(P,PR)
+    else:
+        non_contributing = non_contributing_set(P,PR,False)
     sum1 = 0
     for x in PR:
         mini = math.inf
         for y in P:
-            d = distance_KKM_RC(x,y)
+            d = distance_between_solution_reference(x,y)
             if d < mini:
                 mini = d
         sum1 += mini
@@ -81,7 +90,7 @@ def IGD_NS(P, PR):
     for y in non_contributing:
         mini = math.inf
         for x in PR:
-            d = distance_KKM_RC(x,y)
+            d = distance_between_solution_reference(x,y)
             if d < mini:
                 mini = d
         sum2 += mini
@@ -90,7 +99,7 @@ def IGD_NS(P, PR):
     
         
 
-def fitness(chromesome,P,adapted_R):
+def fitness(chromesome,P,adapted_R,kkm_rc=True):
     '''
     Find the fitness value of the given chromesome
     P: population 
@@ -99,7 +108,7 @@ def fitness(chromesome,P,adapted_R):
     p_set = set(P)
     p_set.remove(chromesome)
 
-    return IGD_NS(p_set,adapted_R)
+    return IGD_NS(p_set,adapted_R,kkm_rc)
 
 
 
@@ -112,16 +121,6 @@ def MatingSelection(graph,P,adapted_R,kkm_rc = True):
     P_prime = []
     # Normolize KKM and RC using the minimum KKM and RC value in the population 
     if kkm_rc:
-        # mini_KKM = math.inf
-        # mini_RC = math.inf
-        
-        # for chromesome in population:
-        #     if chromesome.KKM < mini_KKM:
-        #         mini_KKM = chromesome.KKM
-        #     if chromesome.RC < mini_RC:
-        #         mini_RC = chromesome.RC
-        #     chromesome.fitness = 0
-
         min_KKM = min([p.KKM for p in population])
         min_RC = min([p.RC for p in population])
         for chromesome in population:
@@ -130,7 +129,7 @@ def MatingSelection(graph,P,adapted_R,kkm_rc = True):
         for chromesome in population:
             chromesome.KKM = chromesome.KKM - min_KKM
             chromesome.RC = chromesome.RC - min_RC
-            chromesome.fitness = fitness(chromesome,population,adapted_R)
+            chromesome.fitness = fitness(chromesome,population,adapted_R,kkm_rc)
 
    
         for i in range(len(population)):
@@ -144,4 +143,27 @@ def MatingSelection(graph,P,adapted_R,kkm_rc = True):
                 q.KKM += min_KKM
                 q.RC += min_RC
                 P_prime.append(q)
+    else:
+        min_Qov = min([p.Qov for p in population])
+        min_Numoverlapping = min([p.Numoverlapping for p in population])
+        for chromesome in population:
+            chromesome.fitness = 0
+
+        for chromesome in population:
+            chromesome.Qov = chromesome.Qov - min_Qov
+            chromesome.Numoverlapping = chromesome.Numoverlapping - min_Numoverlapping
+            chromesome.fitness = fitness(chromesome,population,adapted_R)
+
+        for i in range(len(population)):
+            p = random.choice(population)
+            q = random.choice(population)
+            if p.fitness > q.fitness:
+                p.Qov += min_Qov
+                p.Numoverlapping += min_Numoverlapping
+                P_prime.append(p)
+            else:
+                q.Qov += min_Qov
+                q.Numoverlapping += min_Numoverlapping
+                P_prime.append(q)
+
     return P_prime

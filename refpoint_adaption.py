@@ -9,13 +9,17 @@ import math
 def origin_distance(p,origin_y,origin_x):
     return math.sqrt((p.KKM-origin_y)**2 + (p.RC-origin_x)**2) 
 
-def get_objective_angle(p,q,kkm_rc = True,Q = False):
+def get_objective_angle(p,q,kkm_rc = True):
     angle = 0
     if kkm_rc:
         angle = abs(math.atan2(p.KKM,p.RC) - math.atan2(q.KKM,q.RC))
     return angle
     
 def argmin(P,r,z_kkm,z_rc):
+    """ get the individual which in the population has the minimum acute angle with reference
+        point r
+        z_kkm, z_rc are two lowest points in two objective direction in the population
+    """
     mini = math.inf
     mini_p = None
     for p in P:
@@ -144,21 +148,27 @@ def ref_adapt(archive,reference,population):
     minlen = min([len(R),len(A_prime)])
     while len(A_prime) < minlen:
         AP_left = copy.deepcopy(A)
+        #先找到A_prime 和A中相同的个体
         same_set = []
         for a in A:
             for r in A_prime:
                 if a.KKM == r.KKM and a.RC == r.RC:
                     same_set.append(a)
                     break
+        #再移除这些个体
         for s in same_set:
             AP_left.remove(s)
+
+        #这里如果采用下列方法的话，有可能会多删掉AP中原来就存在的,因为定义个体相同是定义其KKM 和RC 相同
+        # same = (set(AP_left).intersection(set(A_prime)))
+        # AP_left = list(AP_left-same)
         '''在这里，我对算法的理解是，找到所有p和q最小锐角中，度数最大的夹角的那一个的p'''
         min_angle_ps = []
         for q in A_prime:
             #对每一个q而言，先找到与其对应的最小p夹角，再在最小夹角中选最大的
             min_angle = math.inf
             min_angle_p = None
-            for p in A_left:
+            for p in AP_left:
                 angle = get_objective_angle(p,q,kkm_rc=True)
                 if angle < min_angle:
                     min_angle = angle

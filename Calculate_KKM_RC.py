@@ -45,7 +45,7 @@ def Cal_KKM_RC(graph,chromesome):
             inside_sum += adjacent_matrix[j[0]][j[1]]
         L += inside_sum/len(i)
 
-    # or like this
+    # alternatives method
     # for i in communities:
     #     temp = 0
     #     for k in i:

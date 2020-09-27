@@ -9,8 +9,9 @@ class chromesome():
         self.membership_metrix=None
         self.KKM = 0
         self.RC = 0
-        self.fitness = None
-        self.Qov = None
+        self.fitness = 0
+        self.Qov = 0
+        self.Numoverlapping=0
 
     def Q_equal(self,other):
         if not isinstance(other, chromesome):
