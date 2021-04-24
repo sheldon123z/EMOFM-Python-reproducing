@@ -1,3 +1,5 @@
+#单个的individual设计
+
 import numpy as np
 import random
 class chromesome():

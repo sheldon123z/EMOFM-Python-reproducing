@@ -1,4 +1,6 @@
-
+'''
+subinitialization 算法
+'''
 import networkx as nx
 import numpy as np
 import random

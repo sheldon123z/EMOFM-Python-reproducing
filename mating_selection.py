@@ -1,3 +1,7 @@
+'''
+matign selection 算法
+'''
+
 import numpy as np
 import math
 import random
