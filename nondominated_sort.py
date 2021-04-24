@@ -97,3 +97,4 @@ def produce_fronts(graph,population):
 # plt.title = 'Objective Space'
 # plt.show()
 
+# %%

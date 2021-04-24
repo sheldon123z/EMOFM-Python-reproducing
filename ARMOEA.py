@@ -1,4 +1,6 @@
-# %%import networkx as nx
+#该部分算法为文章第一部分算法的实现
+
+# %%
 import networkx as nx
 import individual
 import initialization as Init
@@ -36,6 +38,13 @@ def Variation(G,P_prime, N):
 
 def AR_MOEA(population, generation, stage, graph, reference):
 
+'''
+population : 种群数量
+generation： 世代次数
+stage：阶段代号
+graph：networkx graph类型
+reference：文章中的参变量R
+'''
     P = copy.deepcopy(population)
     A = copy.deepcopy(population)
     R = copy.deepcopy(reference)
@@ -132,4 +141,4 @@ if __name__ == "__main__":
     print(len(result))
 
 
-# %%
+

@@ -1,3 +1,5 @@
+#种群initialization算法
+
 #%%
 import networkx as nx
 import random

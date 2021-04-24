@@ -1,4 +1,4 @@
-#%%
+#%%实现membership功能
 import networkx as nx
 import numpy as np
 import copy

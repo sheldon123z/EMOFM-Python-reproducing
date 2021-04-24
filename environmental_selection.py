@@ -1,3 +1,5 @@
+#环境选择算法
+
 import nondominated_sort as ns
 from mating_selection import IGD_NS
 import copy
@@ -14,6 +16,7 @@ def environmental_selection(G,P,R_prime,N):
     Fronts = ns.produce_fronts(G,P)
     k = 0 # the layer's index number 
     n = 0 # the union set length
+    
     #select the minimum layers
     for i,f in enumerate(Fronts):
         n += len(f)

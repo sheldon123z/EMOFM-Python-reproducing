@@ -1,3 +1,5 @@
+#这个文件是整体算法，包含第一部分和第二部分，尚未完成，测试第一部分运行AEMOEA.py
+
 import initialization as Init
 from ARMOEA import AR_MOEA
 import networkx as nx

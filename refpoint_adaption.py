@@ -4,7 +4,12 @@ from collections import OrderedDict
 import copy
 import math
 
-
+'''
+这个算法实现于
+An indicator based multi-objective evolutionary algorithm with reference point adaptation for better versatility
+在EFOMF文章中引用为24
+文章中进一步引用了nondominated sorting 的算法，实现于nondominated_sort.py
+'''
 
 def origin_distance(p,origin_y,origin_x):
     return math.sqrt((p.KKM-origin_y)**2 + (p.RC-origin_x)**2) 
