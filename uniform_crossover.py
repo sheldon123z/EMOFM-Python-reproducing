@@ -5,7 +5,7 @@ import networkx as nx
 import membership 
 import copy
 import itertools
-import calculate_KKM_RC as CKR
+import Calculate_KKM_RC as CKR
 from initialization import initialize_population
 from itertools import combinations
 

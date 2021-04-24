@@ -5,7 +5,7 @@
 An Efficient Approach to Nondominated Sorting for Evolutionary Multiobjective Optimization
 '''
 
-import calculate_KKM_RC as CKR
+import Calculate_KKM_RC as CKR
 from initialization import initialize_population
 import networkx as nx
 

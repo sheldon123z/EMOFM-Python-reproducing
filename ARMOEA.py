@@ -6,7 +6,7 @@ import individual
 import initialization as Init
 import numpy as np
 import random
-import calculate_KKM_RC as CKR
+import Calculate_KKM_RC as CKR
 import mating_selection as MS
 import uniform_crossover as UC
 import environmental_selection as ES
@@ -38,13 +38,13 @@ def Variation(G,P_prime, N):
 
 def AR_MOEA(population, generation, stage, graph, reference):
 
-'''
-population : 种群数量
-generation： 世代次数
-stage：阶段代号
-graph：networkx graph类型
-reference：文章中的参变量R
-'''
+    '''
+    population : 种群数量
+    generation： 世代次数
+    stage：阶段代号
+    graph：networkx graph类型
+    reference：文章中的参变量R
+    '''
     P = copy.deepcopy(population)
     A = copy.deepcopy(population)
     R = copy.deepcopy(reference)
@@ -142,3 +142,5 @@ if __name__ == "__main__":
 
 
 
+
+# %%

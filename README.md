@@ -8,6 +8,9 @@
 运行ARMOEA.py可以实现文章算法stage1部分内容
 EFOMF.py是整个算法的大框架，其中stage2部分尚未实现
 
+结果：运行20次进化，画出最后一次所有chromosome的聚类图形，以及优化值的对比
+
+
 refpoint_adaption.py为论文“An indicator based multi-objective evolutionary algorithm with reference point adaptation for better versatility”中的算法，并进一步使用了nondominated sorting(NS)算法，NS算法在文章“An Efficient Approach to Nondominated Sorting for Evolutionary Multiobjective Optimization”中
 
 
