@@ -1,5 +1,6 @@
 
-#%% overlapping modularity
+#%% overlapping modularity 
+#模糊聚类社团度算法代码
 import networkx as nx
 from itertools import product
 from itertools import permutations

@@ -1,3 +1,5 @@
+#计算KKM和RC
+
 import networkx as nx
 import copy
 import itertools
